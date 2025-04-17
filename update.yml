@@ -1,0 +1,27 @@
+name: Update Sales Data from Excel
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: pip install openpyxl pandas
+      - name: Run update script
+        run: python scripts/update_sales.py
+      - name: Commit and Push
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add data/sales_history.json
+          git commit -m "Daily sales update from Excel"
+          git push
